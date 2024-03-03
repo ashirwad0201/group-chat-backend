@@ -3,6 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize = require('./util/database');
 const adminRoutes = require('./routes/admin');
+const messagesRoutes = require('./routes/messages');
+const User=require('./models/user')
+const Message=require('./models/message')
 const cors = require('cors');
 const app = express();
 
@@ -13,6 +16,10 @@ app.use(cors({
 app.use(bodyParser.json({ extended: false }));
 
 app.use('/admin',adminRoutes);
+app.use('/chat',messagesRoutes);
+
+User.hasMany(Message);
+Message.belongsTo(User);
 
 //sequelize.sync({force:true})
 sequelize.sync()
