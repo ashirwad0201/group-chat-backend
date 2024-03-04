@@ -1,5 +1,6 @@
 const Message=require('../models/message');
 const User=require('../models/user');
+const Sequelize=require('sequelize');
 
 
 exports.insertmessage = async (req, res, next) => {
@@ -16,15 +17,25 @@ exports.insertmessage = async (req, res, next) => {
   
   exports.getmessages= async (req,res,next)=>{
     try{
+        var lastmessageid=req.query.lastmessageid;
+        if(lastmessageid==undefined){
+            lastmessageid=0;
+        }
         const messages=await Message.findAll({
             include: [{
                 model: User,
                 attributes: ['name'],
             }],    
-            attributes: ['chat', 'typeofrequest', 'userId'],
+            attributes: ['id', 'chat', 'typeofrequest', 'userId'],
+            where: {
+                id: {
+                    [Sequelize.Op.gt]: lastmessageid 
+                }
+            },
             order:[['createdAt','ASC']],
         }) 
         const response=messages.map(message=>({
+            id: message.id,
             chat: message.chat,
             typeofrequest: message.typeofrequest,
             name: (message.userId==req.user.id?'You':message.user.name)
