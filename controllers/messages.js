@@ -6,7 +6,9 @@ const Sequelize=require('sequelize');
 exports.insertmessage = async (req, res, next) => {
     try{
         const myObj=req.body;
-        await req.user.createMessage(myObj);
+        const message=await Message.create(myObj)
+        await message.setUser(req.user)
+        await message.setGroup(req.group)
         res.json();
     }
     catch(err){
@@ -30,7 +32,8 @@ exports.insertmessage = async (req, res, next) => {
             where: {
                 id: {
                     [Sequelize.Op.gt]: lastmessageid 
-                }
+                },
+                groupId: req.group.id
             },
             order:[['createdAt','ASC']],
         }) 
