@@ -1,11 +1,13 @@
 const Group=require('../models/group');
 const jwt = require('jsonwebtoken');
 const Message=require('../models/message');
+const { v4: uuidv4 } = require('uuid');
 exports.creategroup = async (req, res, next) => {
     try{
         const myObj=req.body;
+        const uuid=uuidv4();
         console.log(req.user)
-        myObj.adminId=req.user.id;
+        myObj.uuid=uuid;
         const group = await req.user.createGroup(myObj);
         await req.user.addGroup(group,{through : {role: 'admin'}})
         const message=await Message.create({
@@ -34,6 +36,25 @@ exports.getgroups = async (req, res, next) => {
             grpname: group.grpname
         }))
         res.json(response);
+    }
+    catch(err){
+      console.log('Something went wrong',err)
+      res.json({message:'Something went wrong'+err})
+    }
+};
+
+exports.isgroupadmin = async (req, res, next) => {
+    try{
+        const groups = await req.user.getGroups({
+            through: {where: {groupId: req.group.id,role: 'admin'}}
+        });
+        console.log(groups)
+        if(groups.length>0){
+            res.json({isAdmin : true})
+        }
+        else{
+            res.json({isAdmin : false})
+        }
     }
     catch(err){
       console.log('Something went wrong',err)

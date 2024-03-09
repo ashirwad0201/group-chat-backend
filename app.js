@@ -5,6 +5,7 @@ const sequelize = require('./util/database');
 const adminRoutes = require('./routes/admin');
 const messagesRoutes = require('./routes/messages');
 const groupRoutes = require('./routes/group');
+const inviteRoutes = require('./routes/invite');
 const User=require('./models/user')
 const Usergroup=require('./models/usergroup')
 const Group=require('./models/group')
@@ -21,6 +22,7 @@ app.use(bodyParser.json({ extended: false }));
 app.use('/admin',adminRoutes);
 app.use('/chat',messagesRoutes);
 app.use('/group',groupRoutes);
+app.use('/invite',inviteRoutes);
 
 
 Group.belongsToMany(User, {through: Usergroup});
