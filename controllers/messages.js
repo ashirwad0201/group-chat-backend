@@ -37,7 +37,9 @@ exports.insertmessage = async (req, res, next) => {
             },
             order:[['createdAt','ASC']],
         }) 
-        const response=messages.map(message=>({
+        const response=messages
+        .filter(message => (message.typeofrequest=='1' || message.typeofrequest=='2' || (message.typeofrequest=='3' && req.user.id==message.userId)))
+        .map(message=>({
             id: message.id,
             chat: message.chat,
             typeofrequest: message.typeofrequest,
