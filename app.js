@@ -25,7 +25,7 @@ const accessLogStream= fs.createWriteStream(
 const app = express();
 app.use(express.static('public'));
 app.use(cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "http://16.171.197.12",
     methods: ["GET","POST","PUT","DELETE"]
 }));
 app.use(helmet());
